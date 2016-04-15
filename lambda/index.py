@@ -2,7 +2,7 @@
 By YP KOO
 
 Lambda function for Voice controlled drone.
-Ported to Python based on Chris Synan's node.js code.
+Ported to Python based on Chris Synan's code in node.js.
 """
 
 import json
@@ -19,8 +19,8 @@ root_cert = cert_path + "root-CA.crt"
 cert_file = cert_path + "3480a0ba5b-certificate.pem.crt"
 key_file = cert_path + "3480a0ba5b-private.pem.key"
 
-timeout = 5
 pub_success = False
+timeout = 3
 
 def on_connect(mqttc, obj, flags, rc):
 	if rc==0:
@@ -50,7 +50,6 @@ def lambda_handler(event, context):
 				ciphers=None)
 
 		mqttc.connect(host, port)
-		mqttc.subscribe(topic, qos=1)
 
 		mqttc.loop_start()
 
@@ -72,9 +71,11 @@ def lambda_handler(event, context):
 		elif request_type == "SessionEndedRequest":
 			ret = on_session_ended(request, session, mqttc)
 
-		# time.sleep(timeout)
 		while not pub_success:
 			time.sleep(0.5)
+
+		time.sleep(timeout)
+		mqttc.disconnect()
 
 		return ret
 
@@ -103,7 +104,8 @@ def on_intent(intent_request, session, mqtt_client):
 		return do_turn_intent(intent, session, mqtt_client)
 
 def on_session_ended(request, session, mqtt_client):
-	mqtt_client.disconnect()
+	# mqtt_client.disconnect()
+	pass
 
 def do_go_intent(intent, session, mqtt_client):
 
