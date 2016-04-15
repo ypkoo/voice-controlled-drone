@@ -1,4 +1,9 @@
-# By YP KOO
+"""
+By YP KOO
+
+Lambda function for Voice controlled drone.
+Ported to Python based on Chris Synan's node.js code.
+"""
 
 import json
 import paho.mqtt.client as mqtt
@@ -15,12 +20,17 @@ cert_file = cert_path + "3480a0ba5b-certificate.pem.crt"
 key_file = cert_path + "3480a0ba5b-private.pem.key"
 
 timeout = 5
+pub_success = False
 
 def on_connect(mqttc, obj, flags, rc):
 	if rc==0:
 		print ("Subscriber Connection status code: "+str(rc)+" | Connection status: successful")
 	elif rc==1:
 		print ("Subscriber Connection status code: "+str(rc)+" | Connection status: Connection refused")
+
+def on_publish(mqttc, userdata, mid):
+	global pub_success
+	pub_success = True
 
 def lambda_handler(event, context):
 	try:
@@ -30,7 +40,7 @@ def lambda_handler(event, context):
 
 		mqttc = mqtt.Client(client_id="aws-client")
 		mqttc.on_connect = on_connect
-		#mqttc.on_publish = on_publish
+		mqttc.on_publish = on_publish
 
 		mqttc.tls_set(root_cert, 
 				certfile=cert_file, 
@@ -61,6 +71,10 @@ def lambda_handler(event, context):
 			ret = on_intent(request, session, mqttc)
 		elif request_type == "SessionEndedRequest":
 			ret = on_session_ended(request, session, mqttc)
+
+		# time.sleep(timeout)
+		while not pub_success:
+			time.sleep(0.5)
 
 		return ret
 
@@ -103,8 +117,9 @@ def do_go_intent(intent, session, mqtt_client):
 	should_end_session = False
 	speech_output = "Going " + direction + " " + distance + " " + unit
 
-	ret = mqtt_client.publish(topic, "mqtt pub: " + speech_output, qos=1)
-	time.sleep(timeout)
+	msg_to_pub = json.dumps(intent)
+
+	mqtt_client.publish(topic, msg_to_pub, qos=1)
 
 	return build_response(session_attributes, build_speechlet_response(card_title, speech_output, reprompt_text, should_end_session))
 
@@ -118,8 +133,9 @@ def do_command_intent(intent, session, mqtt_client):
 	should_end_session = False
 	speech_output = "Executing command " + task
 
-	ret = mqtt_client.publish(topic, "mqtt pub: " + speech_output, qos=1)
-	time.sleep(timeout)
+	msg_to_pub = json.dumps(intent)
+
+	mqtt_client.publish(topic, msg_to_pub, qos=1)
 
 	return build_response(session_attributes, build_speechlet_response(card_title, speech_output, reprompt_text, should_end_session))
 
@@ -133,8 +149,9 @@ def do_turn_intent(intent, session, mqtt_client):
 	should_end_session = False
 	speech_output = "Turning " + direction
 
-	ret = mqtt_client.publish(topic, "mqtt pub: "  + speech_output, qos=1)
-	time.sleep(timeout)
+	msg_to_pub = json.dumps(intent)
+
+	mqtt_client.publish(topic, msg_to_pub, qos=1)
 
 	return build_response(session_attributes, build_speechlet_response(card_title, speech_output, reprompt_text, should_end_session))
 
