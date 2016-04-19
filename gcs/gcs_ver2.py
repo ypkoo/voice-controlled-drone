@@ -125,7 +125,7 @@ def do_command(data):
 	elif task == "land":
 		vehicle.mode = VehicleMode("LAND")
 		vehicle.flush()
-	else
+	else:
 		print "Wrong command"
 		return
 
