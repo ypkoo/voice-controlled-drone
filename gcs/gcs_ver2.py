@@ -63,12 +63,12 @@ def on_message(mqttc, obj, msg):
 
 def do_go(data):
 	direction = data["slots"]["Direction"]["value"]
-	distance = int(data["slots"]["Distance"]["value"])
-	unit = data["slots"]["Unit"]["value"]  # for now this is hard coded at meters.
-
-	if direction in ["forward", "backward", "right", "left"]:
-		print "Wrong direction"
+	try:
+		distance = int(data["slots"]["Distance"]["value"])
+	except:
+		print "Wrong distance"
 		return
+	unit = data["slots"]["Unit"]["value"]  # for now this is hard coded at meters.
 
 	# convert distance to meters
 	if unit in ["feet", "foot"]:
