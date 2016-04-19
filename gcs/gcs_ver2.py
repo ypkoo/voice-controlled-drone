@@ -66,6 +66,10 @@ def do_go(data):
 	distance = int(data["slots"]["Distance"]["value"])
 	unit = data["slots"]["Unit"]["value"]  # for now this is hard coded at meters.
 
+	if direction in ["forward", "backward", "right", "left"]:
+		print "Wrong direction"
+		return
+
 	# convert distance to meters
 	if unit in ["feet", "foot"]:
 		distance = 0.3048 * distance
@@ -121,6 +125,9 @@ def do_command(data):
 	elif task == "land":
 		vehicle.mode = VehicleMode("LAND")
 		vehicle.flush()
+	else
+		print "Wrong command"
+		return
 
 def do_turn(data, degrees=90):
 	direction = data["slots"]["Direction"]["value"]
