@@ -54,6 +54,7 @@ def lambda_handler(event, context):
 		mqttc.loop_start()
 
 		ret = None
+		is_launch = False
 
 		request = event["request"]
 		session = event["session"]
@@ -66,15 +67,22 @@ def lambda_handler(event, context):
 
 		if request_type == "LaunchRequest":
 			ret = on_launch(request, session)
+			global pub_success
+			pub_success = True
+			is_launch = True
 		elif request_type == "IntentRequest":
 			ret = on_intent(request, session, mqttc)
 		elif request_type == "SessionEndedRequest":
 			ret = on_session_ended(request, session, mqttc)
+			global pub_success
+			pub_success = True
 
 		while not pub_success:
 			time.sleep(0.5)
 
-		time.sleep(timeout)
+		if not is_launch:
+			time.sleep(timeout)
+			
 		mqttc.disconnect()
 
 		return ret
@@ -160,7 +168,7 @@ def do_turn_intent(intent, session, mqtt_client):
 def welcome_response():
 	session_attributes = {}
 	card_title = "Welcome"
-	speech_output = "Welcome to the Koo drone."
+	speech_output = "Welcome to the drone control."
 
 	reprompt_text = "Drone ready for command."
 	should_end_session = False
