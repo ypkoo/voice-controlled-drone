@@ -1,13 +1,6 @@
 import paho.mqtt.client as mqtt
 import ssl, sys
-
-cert_path = "awsCerts/"
-host = "A30ITWQ5LJOT4V.iot.us-east-1.amazonaws.com"
-port = 8883
-topic = "aws/things/GroundStation01/"
-root_cert = cert_path + "root-CA.crt"
-cert_file = cert_path + "3480a0ba5b-certificate.pem.crt"
-key_file = cert_path + "3480a0ba5b-private.pem.key"
+from conf import *
 
 def on_connect(mqttc, obj, flags, rc):
 	if rc==0:

@@ -496,8 +496,6 @@ def location_callback(self, attr_name, value):
 
 if __name__ == "__main__":
 
-	
-
 	# Add a callback `location_callback` for the `global_frame` attribute.
 	# vehicle.add_attribute_listener('location.global_frame', location_callback)
 
