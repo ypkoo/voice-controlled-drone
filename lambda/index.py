@@ -8,6 +8,7 @@ Ported to Python based on Chris Synan's code in node.js.
 import json
 import paho.mqtt.client as mqtt
 import ssl, sys, time
+from conf import *
 
 pub_success = False
 timeout = 3
