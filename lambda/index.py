@@ -9,16 +9,6 @@ import json
 import paho.mqtt.client as mqtt
 import ssl, sys, time
 
-app_id = "amzn1.echo-sdk-ams.app.823775d0-c583-4f47-ba0e-f6ed7a6632cc"
-
-cert_path = "awsCerts/"
-host = "A30ITWQ5LJOT4V.iot.us-east-1.amazonaws.com"
-port = 8883
-topic = "aws/things/GroundStation01/"
-root_cert = cert_path + "root-CA.crt"
-cert_file = cert_path + "3480a0ba5b-certificate.pem.crt"
-key_file = cert_path + "3480a0ba5b-private.pem.key"
-
 pub_success = False
 timeout = 3
 
